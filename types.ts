@@ -3,6 +3,11 @@ export interface Product {
   title: string;
   price: number;
   description: string;
+  createdAt: string;
 }
 
-export type ProductWithoutId = Omit<Product, 'id'>;
+export type ProductMutation = {
+  title: string;
+  price: number;
+  description: string;
+};
