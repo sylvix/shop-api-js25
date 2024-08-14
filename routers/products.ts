@@ -1,6 +1,7 @@
 import express from 'express';
 import fileDb from '../fileDb';
 import {ProductMutation} from '../types';
+import {imagesUpload} from '../multer';
 
 const productsRouter = express.Router();
 
@@ -15,7 +16,7 @@ productsRouter.get('/:id', async (req, res) => {
   return res.send(product);
 });
 
-productsRouter.post('/', async (req, res) => {
+productsRouter.post('/', imagesUpload.single('image'), async (req, res) => {
   if (!req.body.title || !req.body.price) {
     return res.status(400).send({error: 'Title and price are required!'});
   }
@@ -23,7 +24,8 @@ productsRouter.post('/', async (req, res) => {
   const product: ProductMutation = {
     title: req.body.title,
     description: req.body.description,
-    price: req.body.price,
+    price: parseFloat(req.body.price),
+    image: req.file ? req.file.filename : null,
   };
 
   const savedProduct = await fileDb.addItem(product);
