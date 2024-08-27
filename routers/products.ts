@@ -1,5 +1,5 @@
 import express from 'express';
-import { Product, ProductMutation } from '../types';
+import { ProductMutation } from '../types';
 import {imagesUpload} from '../multer';
 import mongoDb from '../mongoDb';
 import { ObjectId } from 'mongodb';
