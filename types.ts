@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb';
+
 export interface Product {
   id: number;
   category_id: number;
@@ -15,7 +17,7 @@ export interface Category {
 }
 
 export type ProductMutation = {
-  category_id: number;
+  category: ObjectId;
   title: string;
   price: number;
   description: string;
