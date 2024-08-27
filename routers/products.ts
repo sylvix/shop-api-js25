@@ -1,19 +1,33 @@
 import express from 'express';
-import fileDb from '../fileDb';
-import {ProductMutation} from '../types';
+import { Product, ProductMutation } from '../types';
 import {imagesUpload} from '../multer';
+import mysqlDb from '../mysqlDb';
+import { ResultSetHeader } from 'mysql2';
 
 const productsRouter = express.Router();
 
 productsRouter.get('/', async (req, res) => {
-  const products = await fileDb.getItems();
+  const result = await mysqlDb.getConnection().query(
+    'SELECT * FROM products'
+  );
+
+  const products = result[0] as Product[];
   return res.send(products);
 });
 
 productsRouter.get('/:id', async (req, res) => {
-  const products = await fileDb.getItems();
-  const product = products.find(p => p.id === req.params.id);
-  return res.send(product);
+  const id = req.params.id;
+  const result = await mysqlDb.getConnection().query(
+    `SELECT * FROM products WHERE id = ?`,
+    [id]
+  );
+  const products = result[0] as Product[];
+
+  if (products.length === 0) {
+    return res.status(404).send({ error: 'Product not found' });
+  }
+
+  return res.send(products[0]);
 });
 
 productsRouter.post('/', imagesUpload.single('image'), async (req, res) => {
@@ -22,14 +36,28 @@ productsRouter.post('/', imagesUpload.single('image'), async (req, res) => {
   }
 
   const product: ProductMutation = {
+    category_id: parseInt(req.body.category_id),
     title: req.body.title,
     description: req.body.description,
     price: parseFloat(req.body.price),
     image: req.file ? req.file.filename : null,
   };
 
-  const savedProduct = await fileDb.addItem(product);
-  return res.send(savedProduct);
+  const insertResult = await mysqlDb.getConnection().query(
+    'INSERT INTO products (category_id, title, description, price, image) VALUES (?, ?, ?, ?, ?)',
+    [product.category_id, product.title, product.description, product.price, product.image],
+  );
+
+  const resultHeader = insertResult[0] as ResultSetHeader;
+
+  const getNewResult = await mysqlDb.getConnection().query(
+    'SELECT * FROM products WHERE id = ?',
+    [resultHeader.insertId]
+  );
+
+  const products = getNewResult[0] as Product[];
+
+  return res.send(products[0]);
 });
 
 export default productsRouter;

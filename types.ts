@@ -1,12 +1,21 @@
 export interface Product {
-  id: string;
+  id: number;
+  category_id: number;
   title: string;
   price: number;
   description: string;
-  createdAt: string;
+  image: string | null;
+  created_at: string;
+}
+
+export interface Category {
+  id: number;
+  title: string;
+  description: string | null;
 }
 
 export type ProductMutation = {
+  category_id: number;
   title: string;
   price: number;
   description: string;
