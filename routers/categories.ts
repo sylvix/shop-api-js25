@@ -1,18 +1,34 @@
 import express from 'express';
-import mysqlDb from '../mysqlDb';
-import { Category } from '../types';
+import Category from '../models/Category';
+import mongoose from 'mongoose';
 
 const categoriesRouter = express.Router();
 
 categoriesRouter.get('/', async (req, res, next) => {
   try {
-    const result = await mysqlDb.getConnection().query('' +
-      'SELECT * FROM categories'
-    );
-    const categories = result[0] as Category[];
+    const categories = await Category.find();
     return res.send(categories);
   } catch (e) {
-    next(e);
+    return next(e);
+  }
+});
+
+categoriesRouter.post('/', async (req, res, next) => {
+  try {
+    const categoryData = {
+      title: req.body.title,
+      description: req.body.description,
+    };
+
+    const category = new Category(categoryData);
+    await category.save();
+    return res.send(category);
+  } catch (error) {
+    if (error instanceof mongoose.Error.ValidationError) {
+      return res.status(400).send(error);
+    }
+
+    return next(error);
   }
 });
 

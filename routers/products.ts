@@ -8,7 +8,8 @@ const productsRouter = express.Router();
 
 productsRouter.get('/', async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const categoryId = req.query.category;
+    const products = await Product.find().populate('category', 'title');
     return res.send(products);
   } catch (error) {
     next(error);
@@ -32,6 +33,7 @@ productsRouter.get('/:id', async (req, res, next) => {
 productsRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
   try {
     const productMutation: ProductMutation = {
+      category: req.body.category,
       title: req.body.title,
       description: req.body.description,
       price: parseFloat(req.body.price),
