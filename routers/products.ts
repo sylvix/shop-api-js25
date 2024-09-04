@@ -8,8 +8,13 @@ const productsRouter = express.Router();
 
 productsRouter.get('/', async (req, res, next) => {
   try {
-    const categoryId = req.query.category;
-    const products = await Product.find().populate('category', 'title');
+    const filter: Record<string, unknown> = {};
+
+    if (req.query.category) {
+      filter.category = req.query.category;
+    }
+
+    const products = await Product.find(filter).populate('category', 'title');
     return res.send(products);
   } catch (error) {
     next(error);

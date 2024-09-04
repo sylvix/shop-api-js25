@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import config from './config';
 import Category from './models/Category';
 import Product from './models/Product';
+import User from './models/User';
 
 const run = async () => {
   await mongoose.connect(config.database);
@@ -16,8 +17,7 @@ const run = async () => {
 
   const [
     cpuCategory,
-    gpuCategory,
-    ssdCategory
+    gpuCategory
   ] = await Category.create({
     title: 'CPUs',
     description: 'Central Processing Units',
@@ -40,6 +40,13 @@ const run = async () => {
     category: gpuCategory,
     image: 'fixtures/gpu.webp',
   });
+
+  const user = new User({
+    username: 'user',
+    password: '1qaz@WSX',
+  });
+  user.generateToken();
+  await user.save();
 
   await db.close();
 };
