@@ -1,7 +1,6 @@
 import express from 'express';
 import User from '../models/User';
 import mongoose from 'mongoose';
-import auth, { RequestWithUser } from '../middleware/auth';
 
 const usersRouter = express.Router();
 
@@ -49,14 +48,24 @@ usersRouter.post('/sessions', async (req, res, next) => {
   }
 });
 
-// /users/secret
-usersRouter.post('/secret', auth, async (req: RequestWithUser, res, next) => {
+usersRouter.delete('/sessions', async (req, res, next) => {
   try {
-    if (!req.user) {
-      return res.status(401).send({error: 'User not found'});
-    }
+    const headerValue = req.get('Authorization');
 
-    return res.send('Secret text, username=' + req.user?.username);
+    if (!headerValue) return res.status(204).send();
+
+    const [_bearer, token] = headerValue.split(' ');
+
+    if (!token) return res.status(204).send();
+
+    const user = await User.findOne({token});
+
+    if (!user) return res.status(204).send();
+
+    user.generateToken();
+    await user.save();
+
+    return res.status(204).send();
   } catch (error) {
     return next(error);
   }
