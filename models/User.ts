@@ -1,13 +1,13 @@
 import mongoose, { HydratedDocument } from 'mongoose';
 import bcrypt from 'bcrypt';
-import { UserFields, UserMethods, UserModel } from '../types';
+import { UserFields, UserMethods, UserModel, UserVirtuals } from '../types';
 import { randomUUID } from 'node:crypto';
 
 const SALT_WORK_FACTOR = 10;
 
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
+const UserSchema = new Schema<UserFields, UserModel, UserMethods, {}, UserVirtuals>({
   username: {
     type: String,
     required: true,
@@ -31,6 +31,30 @@ const UserSchema = new Schema<UserFields, UserModel, UserMethods>({
   token: {
     type: String,
     required: true,
+  }
+},
+  {
+    virtuals: {
+      confirmPassword: {
+        get() {
+          return this.__confirmPassword;
+        },
+        set(confirmPassword: string) {
+          this.__confirmPassword = confirmPassword;
+        }
+      }
+    }
+  }
+);
+
+UserSchema.path('password').validate(function(v) {
+  if (!this.isModified('password')) {
+    return;
+  }
+
+  if (v !== this.confirmPassword) {
+    this.invalidate('confirmPassword', 'Passwords do not match!');
+    this.invalidate('password', 'Passwords do not match!');
   }
 });
 

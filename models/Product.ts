@@ -1,4 +1,4 @@
-import mongoose, {Types} from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 import Category from './Category';
 
 const Schema = mongoose.Schema;
