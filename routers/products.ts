@@ -1,8 +1,9 @@
 import express from 'express';
-import { ProductMutation } from '../types';
 import {imagesUpload} from '../multer';
 import Product from '../models/Product';
 import mongoose from 'mongoose';
+import auth from '../middleware/auth';
+import permit from '../middleware/permit';
 
 const productsRouter = express.Router();
 
@@ -35,18 +36,15 @@ productsRouter.get('/:id', async (req, res, next) => {
   }
 });
 
-productsRouter.post('/', imagesUpload.single('image'), async (req, res, next) => {
+productsRouter.post('/', auth, permit('admin'), imagesUpload.single('image'), async (req, res, next) => {
   try {
-    const productMutation: ProductMutation = {
+    const product = await Product.create({
       category: req.body.category,
       title: req.body.title,
       description: req.body.description,
       price: parseFloat(req.body.price),
       image: req.file ? req.file.filename : null,
-    };
-
-    const product = new Product(productMutation);
-    await product.save();
+    });
 
     return res.send(product);
   } catch (error) {

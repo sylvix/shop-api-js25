@@ -41,12 +41,19 @@ const run = async () => {
     image: 'fixtures/gpu.webp',
   });
 
-  const user = new User({
+  await User.create({
     username: 'user',
     password: '1qaz@WSX',
+    confirmPassword: '1qaz@WSX',
+    role: 'user',
+    token: crypto.randomUUID(),
+  }, {
+    username: 'admin',
+    password: '1@345qWert',
+    confirmPassword: '1@345qWert',
+    role: 'admin',
+    token: crypto.randomUUID(),
   });
-  user.generateToken();
-  await user.save();
 
   await db.close();
 };
