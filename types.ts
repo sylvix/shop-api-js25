@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type ProductMutation = {
   category: string;
@@ -28,5 +28,10 @@ export interface UserMethods {
 export type UserModel = Model<UserFields, {}, UserMethods, UserVirtuals>;
 
 
-
+export interface ReviewFields {
+  user: Types.ObjectId,
+  product: Types.ObjectId,
+  text: string;
+  review: number;
+}
 

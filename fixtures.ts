@@ -42,13 +42,13 @@ const run = async () => {
   });
 
   await User.create({
-    username: 'user',
+    username: 'user@shop.local',
     password: '1qaz@WSX',
     confirmPassword: '1qaz@WSX',
     role: 'user',
     token: crypto.randomUUID(),
   }, {
-    username: 'admin',
+    username: 'admin@shop.local',
     password: '1@345qWert',
     confirmPassword: '1@345qWert',
     role: 'admin',
