@@ -13,6 +13,8 @@ export interface UserFields {
   password: string;
   token: string;
   role: string;
+  displayName?: string;
+  googleID?: string;
   __confirmPassword: string;
 }
 

@@ -38,7 +38,9 @@ const UserSchema = new Schema<UserFields, UserModel, UserMethods, {}, UserVirtua
     required: true,
     default: 'user',
     enum: ['user', 'admin'],
-  }
+  },
+  displayName: String,
+  googleID: String,
 },
   {
     virtuals: {
