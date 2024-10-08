@@ -6,6 +6,7 @@ import productsRouter from './routers/products';
 import categoriesRouter from './routers/categories';
 import usersRouter from './routers/users';
 import reviewsRouter from './routers/reviews';
+import adminRouter from './routers/admin';
 
 const app = express();
 const port = 8000;
@@ -17,6 +18,7 @@ app.use('/products', productsRouter);
 app.use('/categories', categoriesRouter);
 app.use('/users', usersRouter);
 app.use('/reviews', reviewsRouter);
+app.use('/admin', adminRouter);
 
 const run = async () => {
   await mongoose.connect(config.database);

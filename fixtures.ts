@@ -11,6 +11,7 @@ const run = async () => {
   try {
     await db.dropCollection('categories');
     await db.dropCollection('products');
+    await db.dropCollection('users');
   } catch (e) {
     console.log('Skipping drop...');
   }
